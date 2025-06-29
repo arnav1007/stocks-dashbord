@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 interface NavItem {
@@ -90,10 +91,10 @@ export default function Sidebar() {
               const isActive = pathname === item.href;
               return (
                 <li key={item.href}>
-                  <button
-                    type="button"
-                    onClick={() => handleNav(item.href)}
-                    className={`w-full text-left flex items-center p-2 sm:p-3 rounded-lg transition-colors ${
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-center p-2 sm:p-3 rounded-lg transition-colors ${
                       isActive
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -103,7 +104,7 @@ export default function Sidebar() {
                     {!isCollapsed && (
                       <span className="font-medium text-sm sm:text-base">{item.label}</span>
                     )}
-                  </button>
+                  </Link>
                 </li>
               );
             })}
