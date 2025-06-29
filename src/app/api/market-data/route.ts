@@ -1,8 +1,7 @@
 import yahooFinance from 'yahoo-finance2';
 import { MarketData } from '@/types';
-import { NextRequest } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const [sp500, nasdaq, dow] = await Promise.all([
       yahooFinance.quote('^GSPC'),
