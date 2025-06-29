@@ -47,8 +47,8 @@ export default function PortfolioPage() {
     if (savedHoldings) {
       try {
         setHoldings(JSON.parse(savedHoldings));
-      } catch (err) {
-        console.error('Error loading holdings:', err);
+      } catch {
+        console.error('Error loading holdings');
       }
     }
     setMounted(true);
@@ -99,7 +99,7 @@ export default function PortfolioPage() {
         } else {
           setError(data.error || 'Failed to fetch live data');
         }
-      } catch (err) {
+      } catch {
         setError('Network error while fetching live data');
       } finally {
         setLoading(false);
@@ -109,7 +109,7 @@ export default function PortfolioPage() {
     fetchLiveData();
     const interval = setInterval(fetchLiveData, 15000); // Every 15 seconds
     return () => clearInterval(interval);
-  }, [mounted]); // Removed 'holdings' from dependency array to prevent infinite loop
+  }, [mounted, holdings]);
 
   const handleSearch = (query: string) => {
     console.log('Searching for:', query);
@@ -133,8 +133,8 @@ export default function PortfolioPage() {
             purchasePrice: stockData.price, // Auto-fill with live price
           }));
         }
-      } catch (err) {
-        console.error('Error fetching stock price:', err);
+      } catch {
+        console.error('Error fetching stock price');
       }
     }
   };
@@ -180,7 +180,7 @@ export default function PortfolioPage() {
       setHoldings(prev => [...prev, holding]);
       setNewHolding({ symbol: '', sector: 'Technology', exchange: 'S&P', purchasePrice: 0, quantity: 0 });
       setShowAddForm(false);
-    } catch (err) {
+    } catch {
       alert('Error fetching stock data. Please try again.');
     }
   };
@@ -208,8 +208,8 @@ export default function PortfolioPage() {
         quantity: 0,
       });
       setShowAddForm(true);
-    } catch (err) {
-      console.error('Error fetching stock price:', err);
+    } catch {
+      console.error('Error fetching stock price');
       setNewHolding({
         symbol: stock.symbol,
         sector: stock.sector,
