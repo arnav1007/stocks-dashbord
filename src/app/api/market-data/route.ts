@@ -1,5 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
-import { ApiResponse, MarketData } from '@/types';
+import { MarketData } from '@/types';
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     };
 
     return Response.json({ success: true, data });
-  } catch (error: any) {
-    return Response.json({ success: false, error: error.message || 'Failed to fetch market data' }, { status: 500 });
+  } catch (error: unknown) {
+    return Response.json({ success: false, error: error instanceof Error ? error.message : 'Failed to fetch market data' }, { status: 500 });
   }
 } 

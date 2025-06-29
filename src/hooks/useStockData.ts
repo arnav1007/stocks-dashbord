@@ -32,19 +32,20 @@ export const useStockData = ({
       if (dataJson.success && dataJson.data) {
         // Convert the object format to StockData array format for compatibility
         const dataMap: Record<string, StockData> = {};
-        Object.entries(dataJson.data).forEach(([symbol, stockData]: [string, any]) => {
+        Object.entries(dataJson.data).forEach(([symbol, stockData]: [string, unknown]) => {
+          const s = stockData as StockData;
           dataMap[symbol] = {
             symbol: symbol,
-            name: stockData.name || symbol,
-            price: stockData.price,
-            change: stockData.change || 0,
-            changePercent: stockData.changePercent || 0,
-            volume: stockData.volume || 0,
-            marketCap: stockData.marketCap || 0,
-            pe: stockData.peRatio || 0,
-            dividend: stockData.dividend || 0,
-            dividendYield: stockData.dividendYield || 0,
-            lastUpdated: stockData.lastUpdated,
+            name: s.name || symbol,
+            price: s.price,
+            change: s.change || 0,
+            changePercent: s.changePercent || 0,
+            volume: s.volume || 0,
+            marketCap: s.marketCap || 0,
+            pe: s.pe || 0,
+            dividend: s.dividend || 0,
+            dividendYield: s.dividendYield || 0,
+            lastUpdated: s.lastUpdated,
           };
         });
         setData(dataMap);

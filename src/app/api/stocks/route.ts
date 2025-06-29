@@ -62,11 +62,11 @@ export async function GET(req: NextRequest) {
       data: results,
       message: `Successfully processed ${Object.keys(results).length} out of ${symbolList.length} symbols.`
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Error:', error);
     return Response.json({ 
       success: false, 
-      error: error.message || 'Failed to fetch stock data' 
+      error: error instanceof Error ? error.message : 'Failed to fetch stock data' 
     }, { status: 500 });
   }
 } 
