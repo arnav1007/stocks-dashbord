@@ -25,13 +25,6 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleNav = (href: string) => {
-    setIsMobileOpen(false);
-    if (pathname !== href) {
-      router.push(href);
-    }
-  };
-
   return (
     <>
       {/* Mobile menu button */}
