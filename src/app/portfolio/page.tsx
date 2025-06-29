@@ -38,8 +38,11 @@ export default function PortfolioPage() {
     sector: 'Technology',
     exchange: 'S&P' as 'S&P' | 'DOW' | 'NASDAQ',
     purchasePrice: 0,
-    quantity: 0,
+    quantity: '',
   });
+
+  // Loading indicator state
+  const [showLoading, setShowLoading] = useState(false);
 
   // Load holdings from localStorage on mount
   useEffect(() => {
@@ -111,6 +114,17 @@ export default function PortfolioPage() {
     return () => clearInterval(interval);
   }, [mounted, holdings]);
 
+  // Loading indicator logic
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (loading) {
+      timeout = setTimeout(() => setShowLoading(true), 500);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(timeout);
+  }, [loading]);
+
   const handleSearch = (query: string) => {
     console.log('Searching for:', query);
   };
@@ -140,7 +154,7 @@ export default function PortfolioPage() {
   };
 
   const addHolding = async () => {
-    if (!newHolding.symbol || newHolding.purchasePrice <= 0 || newHolding.quantity <= 0) {
+    if (!newHolding.symbol || newHolding.purchasePrice <= 0 || !newHolding.quantity) {
       alert('Please fill all fields correctly');
       return;
     }
@@ -166,19 +180,19 @@ export default function PortfolioPage() {
         sector: newHolding.sector,
         exchange: newHolding.exchange,
         purchasePrice: newHolding.purchasePrice,
-        quantity: newHolding.quantity,
+        quantity: parseInt(newHolding.quantity) || 0,
         cmp: currentPrice,
         peRatio: peRatio,
         latestEarnings: earnings,
-        investment: newHolding.purchasePrice * newHolding.quantity,
-        presentValue: currentPrice * newHolding.quantity,
-        gainLoss: (currentPrice - newHolding.purchasePrice) * newHolding.quantity,
+        investment: newHolding.purchasePrice * (parseInt(newHolding.quantity) || 0),
+        presentValue: currentPrice * (parseInt(newHolding.quantity) || 0),
+        gainLoss: (currentPrice - newHolding.purchasePrice) * (parseInt(newHolding.quantity) || 0),
         portfolioPercent: 0,
         gainLossPercent: 0,
       };
 
       setHoldings(prev => [...prev, holding]);
-      setNewHolding({ symbol: '', sector: 'Technology', exchange: 'S&P', purchasePrice: 0, quantity: 0 });
+      setNewHolding({ symbol: '', sector: 'Technology', exchange: 'S&P', purchasePrice: 0, quantity: '' });
       setShowAddForm(false);
     } catch {
       alert('Error fetching stock data. Please try again.');
@@ -205,7 +219,7 @@ export default function PortfolioPage() {
         sector: stock.sector,
         exchange: 'S&P',
         purchasePrice: currentPrice, // Pre-fill with current market price
-        quantity: 0,
+        quantity: '',
       });
       setShowAddForm(true);
     } catch {
@@ -215,7 +229,7 @@ export default function PortfolioPage() {
         sector: stock.sector,
         exchange: 'S&P',
         purchasePrice: 0,
-        quantity: 0,
+        quantity: '',
       });
       setShowAddForm(true);
     }
@@ -423,9 +437,9 @@ export default function PortfolioPage() {
                 <input
                   type="number"
                   value={newHolding.quantity}
-                  onChange={(e) => setNewHolding(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) => setNewHolding(prev => ({ ...prev, quantity: e.target.value }))}
                   className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                  placeholder="0"
+                  placeholder=""
                   min="1"
                 />
               </div>
@@ -451,7 +465,7 @@ export default function PortfolioPage() {
         <PortfolioTable 
           holdings={holdings} 
           liveCmps={liveCmps} 
-          loading={loading} 
+          loading={showLoading} 
           error={error}
           onRemoveHolding={removeHolding}
         />
